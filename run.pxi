@@ -6,4 +6,7 @@
 (cond
  (= *command* "describe") (do (load-file "project.pxi")
                               (p/describe @p/*project*))
+ (= *command* "deps") (do (load-file "project.pxi")
+                          (doseq [dep (:dependencies @p/*project*)]
+                            (println (:name dep) (:version dep))))
  :else (println "Unknown command:" *command*))
