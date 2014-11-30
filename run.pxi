@@ -23,6 +23,10 @@
   (doseq [dep (:dependencies @p/*project*)]
     (println (:name dep) (:version dep))))
 
+(defcmd repl "Start a REPL in the current project."
+  []
+  (throw (str "This should be invoked by the wrapper.")))
+
 (defcmd help "Display the help"
   []
   (println "Usage: pxi <cmd> <options>")
