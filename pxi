@@ -13,6 +13,9 @@ case $1 in
         shift
         $pixie_path $file $@
         ;;
+    -h|--help)
+        $pixie_path $base_path/run.pxi help
+        ;;
     *)
         $pixie_path $base_path/run.pxi $@
         ;;
