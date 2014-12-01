@@ -9,6 +9,7 @@
   (let [f (cons `fn (cons params body))
         cmd {:name (str name)
              :description description
+             :params `(quote ~params)
              :cmd f}]
     `(do (swap! *all-commands*
                 assoc '~name ~cmd)
@@ -42,13 +43,27 @@
   (let [result (apply t/run-tests program-arguments)]
     (exit (get result :fail))))
 
-(defcmd help "Display the help"
-  []
+(defn help-cmd [cmd]
+  (let [{:keys [name description params] :as info} (get @*all-commands* (symbol cmd))]
+    (if info
+      (do
+        (println (str "Usage: pxi " name " " params))
+        (println)
+        (println description))
+      (println "Unkown command:" cmd))))
+
+(defn help-all []
   (println "Usage: pxi <cmd> <options>")
   (println)
   (println "Availlable commands:")
   (doseq [{:keys [name description]} (vals @*all-commands*)]
     (println (str "  " name (apply str (repeat (- 10 (count name)) " ")) description))))
+
+(defcmd help "Display the help"
+  [& [cmd]]
+  (if cmd
+    (help-cmd cmd)
+    (help-all)))
 
 (def *command* (first program-arguments))
 
