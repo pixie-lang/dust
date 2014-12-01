@@ -31,7 +31,7 @@
 
 (defcmd run "Run the code in the given file."
   [file]
-  (load-file file))
+  (throw (str "This should be invoked by the wrapper.")))
 
 (defcmd test "Run the tests of the current project."
   []
