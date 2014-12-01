@@ -1,6 +1,8 @@
 (require pixie.project :as p)
 (refer 'pixie.project :only '(defproject))
 
+(require pixie.test :as t)
+
 (def *all-commands* (atom {}))
 
 (defmacro defcmd [name description & body]
@@ -26,6 +28,19 @@
 (defcmd repl "Start a REPL in the current project."
   []
   (throw (str "This should be invoked by the wrapper.")))
+
+(defcmd run "Run the code in the given file."
+  [file]
+  (load-file file))
+
+(defcmd test "Run the tests of the current project."
+  []
+  (println @load-paths)
+
+  (t/load-all-tests)
+
+  (let [result (apply t/run-tests program-arguments)]
+    (exit (get result :fail))))
 
 (defcmd help "Display the help"
   []

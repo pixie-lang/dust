@@ -8,6 +8,6 @@ case $1 in
         rlwrap -a -n $pixie_path
         ;;
     *)
-        $pixie_path $base_path/run.pxi $1
+        $pixie_path $base_path/run.pxi $@
         ;;
 esac
