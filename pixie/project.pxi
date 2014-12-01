@@ -15,11 +15,15 @@
 
 (defmacro defproject
   [nm version & description]
-  `(reset! *project*
-           (-> (assoc (hashmap ~@description)
-                 :name (quote ~nm)
-                 :version ~version)
-               expand-dependencies)))
+  (let [description (apply hashmap description)
+        description (if (contains? description :dependencies)
+                      (update-in description [:dependencies] (fn [deps] `(quote ~deps)))
+                      description)]
+    `(reset! *project*
+             (-> (assoc ~description
+                   :name (quote ~nm)
+                   :version ~version)
+                 expand-dependencies))))
 
 (defn describe [project]
   (let [{:keys [name version]} project]
