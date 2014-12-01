@@ -5,8 +5,8 @@
 
 (def *all-commands* (atom {}))
 
-(defmacro defcmd [name description & body]
-  (let [f (cons `fn body)
+(defmacro defcmd [name description params & body]
+  (let [f (cons `fn (cons params body))
         cmd {:name (str name)
              :description description
              :cmd f}]
