@@ -57,6 +57,16 @@
       (extract-to file-name dep-dir)
       (rm file-name))))
 
+(defcmd load-path "Print the load path of the current project."
+  [& [format]]
+  (load-file "project.pxi")
+  (let [print-fn (if (= format "option")
+                   #(print "--load-path" % "")
+                   println)
+        project @p/*project*]
+    (doseq [{:keys [name]} (get project :dependencies)]
+      (print-fn (str "deps/" name "/src")))))
+
 (defcmd repl "Start a REPL in the current project."
   []
   (throw (str "This should be invoked by the wrapper.")))
