@@ -8,8 +8,9 @@
     (if deps
       (assoc project
         :dependencies
-        (vec (map (fn [[name version]]
-                    {:name name, :version version})
+        (vec (map (fn [[name version & options]]
+                    (merge {:name name, :version version}
+                           (apply hashmap options)))
                   deps)))
       project)))
 
