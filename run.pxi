@@ -35,12 +35,12 @@
   (throw (str "This should be invoked by the wrapper.")))
 
 (defcmd test "Run the tests of the current project."
-  []
+  [& args]
   (println @load-paths)
 
   (t/load-all-tests)
 
-  (let [result (apply t/run-tests program-arguments)]
+  (let [result (apply t/run-tests args)]
     (exit (get result :fail))))
 
 (defn help-cmd [cmd]
