@@ -1,6 +1,7 @@
 (require pixie.project :as p)
 (refer 'pixie.project :only '(defproject))
 
+(require pixie.string :as str)
 (require pixie.test :as t)
 
 (def *all-commands* (atom {}))
@@ -25,6 +26,36 @@
   (load-file "project.pxi")
   (doseq [dep (:dependencies @p/*project*)]
     (println (:name dep) (:version dep))))
+
+(defn echo [& args]
+  (apply println "echo" args))
+
+(defn mkdir [dir]
+  (println "mkdir" "--parents" dir))
+
+(defn rm [file]
+  (println "rm" file))
+
+(defn download [url file]
+  (println "curl" "--silent" "--location" "--output" file url))
+
+(defn extract-to [archive dir]
+  (mkdir dir)
+  (println "tar" "--strip-components" 1 "--extract" "--directory" dir "--file" archive))
+
+(defcmd get-deps "Download the dependencies of the current project."
+  []
+  (load-file "project.pxi")
+
+  (mkdir "deps")
+  (doseq [{:keys [name version ref]} (get @p/*project* :dependencies)]
+    (echo "Downloading" name)
+    (let [download-url (str "https://github.com/" name "/archive/" version ".tar.gz")
+          file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
+          dep-dir (str "deps/" name)]
+      (download download-url file-name)
+      (extract-to file-name dep-dir)
+      (rm file-name))))
 
 (defcmd repl "Start a REPL in the current project."
   []
