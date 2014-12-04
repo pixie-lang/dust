@@ -2,7 +2,7 @@
 
 base_path=`dirname $0`
 pixie_path=`which pixie-vm`
-run_pxi="$pixie_path $base_path/run.pxi"
+run_pxi="$pixie_path -l $base_path/src $base_path/run.pxi"
 
 function load_path() {
     load_path=""

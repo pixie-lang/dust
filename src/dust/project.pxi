@@ -1,4 +1,4 @@
-(ns pixie.project
+(ns dust.project
   (require pixie.string :as str))
 
 (def *project* (atom nil))

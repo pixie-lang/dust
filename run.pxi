@@ -1,5 +1,5 @@
-(require pixie.project :as p)
-(refer 'pixie.project :only '(defproject))
+(require dust.project :as p)
+(refer 'dust.project :only '(defproject))
 
 (require pixie.string :as str)
 (require pixie.test :as t)
