@@ -29,9 +29,9 @@ dependencies.
 
 ## Project definition
 
-`dust` reads it's settings from a per-project `project.pxi` file. In that file
+`dust` reads its settings from a per-project `project.pxi` file. In that file
 one configures the name, version, dependencies and other metadata about the
-project.
+project:
 
 ```clojure
 (defproject dust "0.1.0-alpha"
@@ -64,4 +64,4 @@ user => @load-paths
 
 * install [Pixie](https://github.com/pixie-lang/pixie)
 * `git clone git://github.com/pixie-lang/dust`
-* `ln -s <path-to-dust> /usr/bin/dust` (or really anywhere else in `$PATH`
+* `ln -s <path-to-dust>/dust /usr/bin/dust` (or really anywhere else in `$PATH`
