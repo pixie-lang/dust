@@ -1,7 +1,7 @@
 #!/bin/bash
 
 base_path=`dirname $0`
-pixie_path="$base_path/pixie-vm"
+pixie_path=`which pixie-vm`
 
 function load_path() {
     load_path=""
