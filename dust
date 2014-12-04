@@ -2,19 +2,19 @@
 
 base_path=$(dirname `readlink -f $0`)
 pixie_path=`which pixie-vm`
-run_pxi="$pixie_path -l $base_path/src $base_path/run.pxi"
+run_dust="$pixie_path -l $base_path/src $base_path/run.pxi"
 
 function load_path() {
     load_path=""
     if [ -f "project.pxi" ]; then
-        load_path="`$run_pxi load-path option`"
+        load_path="`$run_dust load-path option`"
     fi
     echo $load_path
 }
 
 case $1 in
     "get-deps")
-        $run_pxi $@ | sh
+        $run_dust $@ | sh
         ;;
     ""|"repl")
         rlwrap -a -n $pixie_path `load_path`
@@ -26,9 +26,9 @@ case $1 in
         $pixie_path `load_path` $file $@
         ;;
     -h|--help)
-        $run_pxi help
+        $run_dust help
         ;;
     *)
-        $run_pxi $@
+        $run_dust $@
         ;;
 esac

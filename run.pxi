@@ -88,13 +88,13 @@
   (let [{:keys [name description params] :as info} (get @*all-commands* (symbol cmd))]
     (if info
       (do
-        (println (str "Usage: pxi " name " " params))
+        (println (str "Usage: dust " name " " params))
         (println)
         (println description))
       (println "Unkown command:" cmd))))
 
 (defn help-all []
-  (println "Usage: pxi <cmd> <options>")
+  (println "Usage: dust <cmd> <options>")
   (println)
   (println "Availlable commands:")
   (doseq [{:keys [name description]} (vals @*all-commands*)]
