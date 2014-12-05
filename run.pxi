@@ -31,7 +31,7 @@
   (apply println "echo" args))
 
 (defn mkdir [dir]
-  (println "mkdir" "--parents" dir))
+  (println "mkdir" "-p" dir))
 
 (defn rm [file]
   (println "rm" file))
