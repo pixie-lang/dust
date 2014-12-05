@@ -22,7 +22,11 @@ case $1 in
         $run_dust $@ | sh
         ;;
     ""|"repl")
-        rlwrap -aignored -n $pixie_path `load_path`
+        rlwrap_cmd=""
+        if [ -n "`which rlwrap`" ]; then
+            rlwrap_cmd="rlwrap -aignored -n"
+        fi
+        $rlwrap_cmd $pixie_path `load_path`
         ;;
     "run")
         shift
