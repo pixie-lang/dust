@@ -1,6 +1,11 @@
 #!/bin/bash
 
-base_path=$(dirname `readlink -f $0`)
+base_path=$0
+if [ -L "$base_path" ]; then
+    base_path=`readlink $base_path`
+fi
+base_path=`dirname $base_path`
+
 pixie_path=`which pixie-vm`
 run_dust="$pixie_path -l $base_path/src $base_path/run.pxi"
 
