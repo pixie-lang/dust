@@ -65,3 +65,6 @@ user => @load-paths
 * install [Pixie](https://github.com/pixie-lang/pixie)
 * `git clone git://github.com/pixie-lang/dust`
 * `ln -s <path-to-dust>/dust /usr/bin/dust` (or really anywhere else in `$PATH`
+
+For an improved REPL with history and line-editing you'll need to install
+`rlwrap`.
