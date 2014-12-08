@@ -68,3 +68,12 @@ user => @load-paths
 
 For an improved REPL with history and line-editing you'll need to install
 `rlwrap`.
+
+## Contributions welcome!
+
+some ideas:
+
+* `dust doc`, probably using something like [this](https://github.com/pixie-lang/pixie/blob/master/examples/gen-docs.pxi)
+* dependency improvements:
+    - recursive dependencies (e.g. fetch dependencies of dependencies)
+    - fetch dependencies from paths inside repositories, maybe via a `:path "sub/dir"` option
