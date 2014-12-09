@@ -14,6 +14,10 @@
                   deps)))
       project)))
 
+(defn merge-defaults [project]
+  (merge {:source-paths ["src"]}
+         project))
+
 (defmacro defproject
   [nm version & description]
   (let [description (apply hashmap description)
@@ -24,7 +28,8 @@
              (-> (assoc ~description
                    :name (quote ~nm)
                    :version ~version)
-                 expand-dependencies))))
+                 expand-dependencies
+                 merge-defaults))))
 
 (defn describe [project]
   (let [{:keys [name version]} project]

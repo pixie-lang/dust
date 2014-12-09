@@ -64,6 +64,8 @@
                    #(print "--load-path" % "")
                    println)
         project @p/*project*]
+    (doseq [path (get project :source-paths)]
+      (print-fn path))
     (doseq [{:keys [name]} (get project :dependencies)]
       (print-fn (str "deps/" name "/src")))))
 
