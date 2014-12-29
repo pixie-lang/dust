@@ -16,7 +16,7 @@ dependencies.
     $ dust help
     Usage: dust <cmd> <options>
 
-    Availlable commands:
+    Available commands:
     get-deps  Download the dependencies of the current project.
     deps      List the dependencies and their versions of the current project.
     repl      Start a REPL in the current project.
