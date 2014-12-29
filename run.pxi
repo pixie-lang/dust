@@ -98,7 +98,7 @@
 (defn help-all []
   (println "Usage: dust <cmd> <options>")
   (println)
-  (println "Availlable commands:")
+  (println "Available commands:")
   (doseq [{:keys [name description]} (vals @*all-commands*)]
     (println (str "  " name (apply str (repeat (- 10 (count name)) " ")) description))))
 
