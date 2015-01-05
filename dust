@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 base_path=$0
 if [ -L "$base_path" ]; then
