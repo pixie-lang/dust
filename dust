@@ -7,6 +7,10 @@ fi
 base_path=`dirname $base_path`
 
 pixie_path=`which pixie-vm`
+if [ -z "$pixie_path" ]; then
+    echo "Error: 'pixie-vm' must be on your PATH"
+    exit 1
+fi
 run_dust="$pixie_path -l $base_path/src $base_path/run.pxi"
 
 function load_path() {
