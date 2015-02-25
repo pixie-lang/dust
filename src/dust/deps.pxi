@@ -26,7 +26,7 @@
 ;; -----------------------------------------------------
 
 (defn- resolve-dependency
-  "Download and extracting dependency and return project map"
+  "Download and extract dependency - return dependency project map"
   [{:keys [name version]}]
   (let [url (str "https://github.com/" name "/archive/" version ".tar.gz")
         file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
