@@ -3,33 +3,33 @@
 
 (def *project* (atom nil))
 
-(defn expand-dependencies [project]
-  (let [deps (get project :dependencies)]
-    (if deps
-      (assoc project
-        :dependencies
-        (vec (map (fn [[name version & options]]
-                    (merge {:name name, :version version}
-                           (apply hashmap options)))
-                  deps)))
-      project)))
-
 (defn merge-defaults [project]
   (merge {:source-paths ["src"]}
          project))
 
+(defn expand-dependencies
+  [project]
+  (if-let [deps (:dependencies project)]
+    (assoc project
+           :dependencies
+           (vec (map (fn [[name version & options]]
+                       (merge {:name `(quote ~name) :version version}
+                              (apply hashmap options)))
+                     deps)))
+    project))
+
+(defn project->map
+  [[nm version & description]]
+  (let [description (apply hashmap description)]
+    (-> description
+        (assoc :name `(quote ~nm) :version version)
+        expand-dependencies
+        merge-defaults)))
+
 (defmacro defproject
-  [nm version & description]
-  (let [description (apply hashmap description)
-        description (if (contains? description :dependencies)
-                      (update-in description [:dependencies] (fn [deps] `(quote ~deps)))
-                      description)]
-    `(reset! *project*
-             (-> (assoc ~description
-                   :name (quote ~nm)
-                   :version ~version)
-                 expand-dependencies
-                 merge-defaults))))
+  [& args]
+  (let [project (project->map args)]
+    `(reset! *project* ~project)))
 
 (defn describe [project]
   (let [{:keys [name version]} project]
