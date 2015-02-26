@@ -22,15 +22,6 @@
   (mkdir dir)
   (cmd "tar" "--strip-components" 1 "--extract" "--directory" dir "--file" archive))
 
-(defn tree-seq
-  [branch? children root]
-  (let [walk (fn walk [node]
-               (lazy-seq
-                (cons node
-                  (when (branch? node)
-                    (mapcat walk (children node))))))]
-    (walk root)))
-
 (defn resolved?
   "true when dependency name resolved"
   [name]
