@@ -22,9 +22,6 @@ function load_path() {
 }
 
 case $1 in
-    "get-deps")
-        $run_dust $@
-        ;;
     ""|"repl")
         rlwrap_cmd=""
         if [ -n "`which rlwrap`" ]; then

@@ -27,8 +27,8 @@
 (defcmd deps
   "List the dependencies and their versions of the current project."
   []
-  (doseq [{:keys [name version]} (:dependencies @p/*project*)]
-    (println name version)))
+  (doseq [dep (:dependencies @p/*project*)]
+    (println (:name dep) (:version dep))))
 
 (defcmd get-deps
   "Download the dependencies of the current project."
