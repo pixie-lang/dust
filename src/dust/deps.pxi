@@ -52,7 +52,8 @@
       (-> (io/slurp (str dep-dir "/project.pxi"))
           (read-string)
           (rest)
-          (p/project->map)))))
+          (p/project->map)
+          (eval)))))
 
 (defn get-deps
   "Recursively download and extract all project dependencies."
