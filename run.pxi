@@ -2,7 +2,6 @@
 (refer 'dust.project :only '(defproject))
 
 (require dust.deps :as d)
-(require dust.util :as util)
 (require pixie.string :as str)
 (require pixie.test :as t)
 
@@ -34,7 +33,6 @@
 (defcmd get-deps
   "Download the dependencies of the current project."
   []
-  (util/mkdir "deps")
   (d/get-deps @p/*project*))
 
 (defcmd load-path

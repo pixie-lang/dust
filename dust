@@ -23,7 +23,7 @@ function load_path() {
 
 case $1 in
     "get-deps")
-        $run_dust $@ | sh
+        $run_dust $@
         ;;
     ""|"repl")
         rlwrap_cmd=""

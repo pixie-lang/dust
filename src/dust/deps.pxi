@@ -1,41 +1,53 @@
 (ns dust.deps
   (require pixie.string :as str)
   (require pixie.io :as io)
-  (require dust.util :as util)
   (require dust.project :as p))
 
 (def *deps* (atom {}))
 
-(defn- download [url file]
-  (println "curl" "--silent" "--location" "--output" file url))
+(defn cmd
+  [& args]
+  (sh (str/join " " args)))
 
-(defn- extract-to [archive dir]
-  (util/mkdir dir)
-  (println "tar" "--strip-components" 1 "--extract" "--directory" dir "--file" archive))
+(defn rm [file]
+  (cmd "rm" file))
 
-;; -----------------------------------------------------
-;; should be moved into stdlib if needed
+(defn mkdir [file]
+  (cmd "mkdir" "-p" file))
+
+(defn download [url file]
+  (cmd "curl" "--silent" "--location" "--output" file url))
+
+(defn extract-to [archive dir]
+  (mkdir dir)
+  (cmd "tar" "--strip-components" 1 "--extract" "--directory" dir "--file" archive))
+
 (defn tree-seq
-   [branch? children root]
-   (let [walk (fn walk [node]
-                (lazy-seq
-                 (cons node
-                   (when (branch? node)
-                     (mapcat walk (children node))))))]
-     (walk root)))
-;; -----------------------------------------------------
+  [branch? children root]
+  (let [walk (fn walk [node]
+               (lazy-seq
+                (cons node
+                  (when (branch? node)
+                    (mapcat walk (children node))))))]
+    (walk root)))
 
-(defn- resolve-dependency
-  "Download and extract dependency - return dependency project map"
+(defn resolved?
+  "true when dependency name resolved"
+  [name]
+  (or (contains? @*deps* name)
+      (zero? (cmd "ls" (str "deps/" name) ">> /dev/null 2>&1"))))
+
+(defn resolve-dependency
+  "Download and extract dependency - return dependency project map."
   [{:keys [name version]}]
   (let [url (str "https://github.com/" name "/archive/" version ".tar.gz")
         file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
         dep-dir (str "deps/" name)]
-    (when (not (contains? @*deps* name))
-      (util/echo "Downloading" name)
+    (when (not (resolved? name))
+      (println "Downloading" name)
       (download url file-name)
       (extract-to file-name dep-dir)
-      (util/rm file-name)
+      (rm file-name)
       (swap! *deps* assoc name version)
       (-> (io/slurp (str dep-dir "/project.pxi"))
           (read-string)
@@ -43,6 +55,8 @@
           (p/project->map)))))
 
 (defn get-deps
+  "Recursively download and extract all project dependencies."
   [project]
   (let [child-fn #(map resolve-dependency (:dependencies %))]
+    (mkdir "deps")
     (vec (tree-seq :dependencies child-fn project))))
