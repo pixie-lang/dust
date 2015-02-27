@@ -41,12 +41,12 @@
   [& [format]]
   (let [print-fn (if (= format "option")
                    #(print "--load-path" % "")
-                   println)
-        project @p/*project*]
-    (doseq [path (get project :source-paths)]
+                   println)]
+    (doseq [path (get @p/*project* :source-paths)]
       (print-fn path))
-    (doseq [{:keys [name]} (get project :dependencies)]
-      (print-fn (str "deps/" name "/src")))))
+    (doseq [{:keys [source-paths path]} (get @p/*project* :dependencies)]
+      (doseq [src-path source-paths]
+        (print-fn (str path "/" src-path))))))
 
 (defcmd ^:no-project repl
   "Start a REPL in the current project."

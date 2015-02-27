@@ -31,11 +31,12 @@
 (defn load-project
   "Load project.pxi in dir - return project map"
   [dir]
-  (-> (io/slurp (str dep-dir "/project.pxi"))
+  (-> (io/slurp (str dir "/project.pxi"))
       (read-string)
       (rest)
       (p/project->map)
-      (eval)))
+      (eval)
+      (assoc :path dir)))
 
 (defn resolve-dependency
   "Download and extract dependency - return dependency project map."
@@ -48,7 +49,7 @@
       (download url file-name)
       (extract-to file-name dep-dir)
       (rm file-name))
-    (let [project (load-project)]
+    (let [project (load-project dep-dir)]
       (swap! *deps* assoc (:name project) project)
       project)))
 
@@ -58,4 +59,4 @@
   (let [child-fn #(map resolve-dependency (:dependencies %))]
     (mkdir "deps")
     (vec (tree-seq :dependencies child-fn project))
-    (swap! p/*project* assoc :dependencies (mapcat :dependencies (vals @*deps*)))))
+    (swap! p/*project* assoc :dependencies (vals @*deps*))))
