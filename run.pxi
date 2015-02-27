@@ -7,11 +7,17 @@
 
 (def *all-commands* (atom {}))
 
+(defn load-project
+  "Perform all necessary steps to load a project."
+  []
+  (load-file "project.pxi")
+  (d/get-deps @p/*project*))
+
 (defmacro defcmd
   [name description params & body]
   (let [body (if (:no-project (meta name))
                body
-               (cons `(load-file "project.pxi") body))
+               (cons '(load-project) body))
         cmd {:name (str name)
              :description description
              :params `(quote ~params)
@@ -29,11 +35,6 @@
   []
   (doseq [dep (:dependencies @p/*project*)]
     (println (:name dep) (:version dep))))
-
-(defcmd get-deps
-  "Download the dependencies of the current project."
-  []
-  (d/get-deps @p/*project*))
 
 (defcmd load-path
   "Print the load path of the current project."

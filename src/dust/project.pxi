@@ -4,17 +4,15 @@
 (def *project* (atom nil))
 
 (defn merge-defaults [project]
-  (merge {:source-paths ["src"]}
-         project))
+  (merge {:source-paths ["src"]} project))
 
-(defn expand-dependencies
+(defn quote-dependency-names
   [project]
   (if-let [deps (:dependencies project)]
     (assoc project
            :dependencies
-           (vec (map (fn [[name version & options]]
-                       (merge {:name `(quote ~name) :version version}
-                              (apply hashmap options)))
+           (vec (map (fn [[nm & rest]]
+                       (vec (cons `(quote ~nm) rest)))
                      deps)))
     project))
 
@@ -23,7 +21,7 @@
   (let [description (apply hashmap description)]
     (-> description
         (assoc :name `(quote ~nm) :version version)
-        expand-dependencies
+        quote-dependency-names
         merge-defaults)))
 
 (defmacro defproject

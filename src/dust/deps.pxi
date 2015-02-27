@@ -28,9 +28,18 @@
   (or (contains? @*deps* name)
       (zero? (cmd "ls" (str "deps/" name) ">> /dev/null 2>&1"))))
 
+(defn load-project
+  "Load project.pxi in dir - return project map"
+  [dir]
+  (-> (io/slurp (str dep-dir "/project.pxi"))
+      (read-string)
+      (rest)
+      (p/project->map)
+      (eval)))
+
 (defn resolve-dependency
   "Download and extract dependency - return dependency project map."
-  [{:keys [name version]}]
+  [[name version]]
   (let [url (str "https://github.com/" name "/archive/" version ".tar.gz")
         file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
         dep-dir (str "deps/" name)]
@@ -38,17 +47,15 @@
       (println "Downloading" name)
       (download url file-name)
       (extract-to file-name dep-dir)
-      (rm file-name)
-      (swap! *deps* assoc name version)
-      (-> (io/slurp (str dep-dir "/project.pxi"))
-          (read-string)
-          (rest)
-          (p/project->map)
-          (eval)))))
+      (rm file-name))
+    (let [project (load-project)]
+      (swap! *deps* assoc (:name project) project)
+      project)))
 
 (defn get-deps
   "Recursively download and extract all project dependencies."
   [project]
   (let [child-fn #(map resolve-dependency (:dependencies %))]
     (mkdir "deps")
-    (vec (tree-seq :dependencies child-fn project))))
+    (vec (tree-seq :dependencies child-fn project))
+    (swap! p/*project* assoc :dependencies (mapcat :dependencies (vals @*deps*)))))

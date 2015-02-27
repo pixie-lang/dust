@@ -45,8 +45,6 @@ Pixie so that the namespaces are availlable in the repl or when running
 programs:
 
 ```
-$ dust get-deps
-Downloading heyLu/hiccup.pxi
 $ dust repl
 Pixie 0.1 - Interactive REPL
 (linux, gcc)

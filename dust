@@ -16,7 +16,7 @@ run_dust="$pixie_path -l $base_path/src $base_path/run.pxi"
 function load_path() {
     load_path=""
     if [ -f "project.pxi" ]; then
-        load_path="`$run_dust load-path option`"
+        load_path="`$run_dust load-path option | tail -1`"
     fi
     echo $load_path
 }
