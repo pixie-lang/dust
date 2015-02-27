@@ -3,6 +3,7 @@
 
 (require dust.deps :as d)
 (require pixie.string :as str)
+(require pixie.io :as io)
 (require pixie.test :as t)
 
 (def *all-commands* (atom {}))
@@ -37,18 +38,18 @@
     (println (:name dep) (:version dep))))
 
 (defcmd load-path
-  "Print the load path of the current project."
+  "Print the load path of the current project.
+  when format is 'option', write .load-path file"
   [& [format]]
-  (let [print-fn (if (= format "option")
-                   #(print "--load-path" % "")
-                   println)
-        paths (fn [{:keys [path source-paths]}]
-                (if path
-                  (map #(str path "/" %) source-paths)
-                  source-paths))
-        deps (:dependencies @p/*project*)]
-    (doseq [path (mapcat paths (conj deps @p/*project*))]
-      (print-fn path))))
+  (let [path-fn (fn [{:keys [path source-paths]}]
+                  (if path
+                    (map #(str path "/" %) source-paths)
+                    source-paths))
+        deps (:dependencies @p/*project*)
+        paths (mapcat path-fn (conj deps @p/*project*))]
+    (if (= format "option")
+      (io/spit ".load-path" (str "--load-path " (str/join " --load-path " paths)))
+      (doseq [path paths] (println path)))))
 
 (defcmd ^:no-project repl
   "Start a REPL in the current project."

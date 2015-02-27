@@ -44,6 +44,7 @@ programs:
 
 ```
 $ dust repl
+Downloading heyLu/hiccup.pxi
 Pixie 0.1 - Interactive REPL
 (linux, gcc)
 :exit-repl or Ctrl-D to quit
