@@ -22,11 +22,9 @@
   (mkdir dir)
   (cmd "tar" "--strip-components" 1 "--extract" "--directory" dir "--file" archive))
 
-(defn resolved?
-  "true when dependency name resolved"
-  [name]
-  (or (contains? @*deps* name)
-      (zero? (cmd "ls" (str "deps/" name) ">> /dev/null 2>&1"))))
+(defn directory-exists?
+  [dir]
+  (zero? (cmd "ls" dir ">> /dev/null 2>&1")))
 
 (defn load-project
   "Load project.pxi in dir - return project map"
@@ -44,7 +42,7 @@
   (let [url (str "https://github.com/" name "/archive/" version ".tar.gz")
         file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
         dep-dir (str "deps/" name)]
-    (when (not (resolved? name))
+    (when (not (directory-exists? dep-dir))
       (println "Downloading" name)
       (download url file-name)
       (extract-to file-name dep-dir)
