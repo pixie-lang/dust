@@ -4,21 +4,16 @@
 (require dust.deps :as d)
 (require pixie.string :as str)
 (require pixie.io :as io)
+(require pixie.fs :as fs)
 (require pixie.test :as t)
 
 (def *all-commands* (atom {}))
-
-(defn load-project
-  "Perform all necessary steps to load a project."
-  []
-  (load-file "project.pxi")
-  (d/get-deps @p/*project*))
 
 (defmacro defcmd
   [name description params & body]
   (let [body (if (:no-project (meta name))
                body
-               (cons '(load-project) body))
+               (cons `(load-file "project.pxi") body))
         cmd {:name (str name)
              :description description
              :params `(quote ~params)
@@ -34,22 +29,23 @@
 (defcmd deps
   "List the dependencies and their versions of the current project."
   []
-  (doseq [dep (:dependencies @p/*project*)]
-    (println (:name dep) (:version dep))))
+  (doseq [[name version] (:dependencies @p/*project*)]
+    (println name version)))
 
 (defcmd load-path
-  "Print the load path of the current project.
-  when format is 'option', write .load-path file"
-  [& [format]]
-  (let [path-fn (fn [{:keys [path source-paths]}]
-                  (if path
-                    (map #(str path "/" %) source-paths)
-                    source-paths))
-        deps (:dependencies @p/*project*)
-        paths (mapcat path-fn (conj deps @p/*project*))]
-    (if (= format "option")
-      (io/spit ".load-path" (str "--load-path " (str/join " --load-path " paths)))
-      (doseq [path paths] (println path)))))
+  "Print the load path of the current project."
+  []
+  (when (not (fs/exists? (fs/->File ".load-path")))
+    (println "Please run `dust get-deps`")
+    (exit 1))
+  (doseq [path (str/split (io/slurp ".load-path") "--load-path")]
+    (when (not (str/empty? path))
+      (println (str/trim path)))))
+
+(defcmd get-deps
+  "Download the dependencies of the current project."
+  []
+  (-> @p/*project* d/get-deps d/write-load-path))
 
 (defcmd ^:no-project repl
   "Start a REPL in the current project."
@@ -80,7 +76,8 @@
       (println "Unkown command:" cmd))))
 
 (defn help-all []
-  (println "Usage: dust <cmd> <options>\n")
+  (println "Usage: dust <cmd> <options>")
+  (println)
   (println "Available commands:")
   (doseq [{:keys [name description]} (vals @*all-commands*)]
     (println (str "  " name (apply str (repeat (- 10 (count name)) " ")) description))))

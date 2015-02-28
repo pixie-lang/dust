@@ -37,5 +37,5 @@
         (println (str "  " (str/capitalize k) ": " v))))
     (when-let [deps (get project :dependencies)]
       (println "  Dependencies:")
-      (doseq [{:keys [name version]} deps]
+      (doseq [[name version] deps]
         (println (str "    - " name "@" version))))))

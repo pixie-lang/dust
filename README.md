@@ -17,6 +17,7 @@ dependencies.
     Usage: dust <cmd> <options>
 
     Available commands:
+    get-deps  Download the dependencies of the current project.
     deps      List the dependencies and their versions of the current project.
     repl      Start a REPL in the current project.
     run       Run the code in the given file.
@@ -38,13 +39,14 @@ project:
   :dependencies [[heyLu/hiccup.pxi "0.1.0-alpha"]])
 ```
 
-With such a project definition, dust will set up the `load-paths` var in
-Pixie so that the namespaces of all your dependencies are availlable in the repl or when running
-programs:
+With such a project definition you can run `dust get-deps` to fetch the
+dependencies of the project and dust will set up the `load-paths` var in
+Pixie so that the namespaces are available in the repl or when running programs:
 
 ```
-$ dust repl
+$ dust get-deps
 Downloading heyLu/hiccup.pxi
+$ dust repl
 Pixie 0.1 - Interactive REPL
 (linux, gcc)
 :exit-repl or Ctrl-D to quit
