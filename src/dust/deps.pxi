@@ -62,7 +62,10 @@
 (defn get-deps
   "Recursively download and extract all project dependencies."
   [project]
-  (let [child-fn #(map resolve-dependency (:dependencies %))]
-    (mkdir "deps")
+  (let [child-fn #(map resolve-dependency (:dependencies %))
+        dep-dir "deps"]
+    (when (fs/exists? (fs/->Dir dep-dir))
+      (cmd "rm" "-r" dep-dir))
+    (mkdir dep-dir)
     (vec (tree-seq :dependencies child-fn project))
     (assoc project :dependencies (vals @*deps*))))
