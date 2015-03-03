@@ -13,30 +13,28 @@ if [ -z "$pixie_path" ]; then
 fi
 run_dust="$pixie_path -l $base_path/src $base_path/run.pxi"
 
-function load_path() {
+function set_load_path() {
     load_path=""
-    if [ -f "project.pxi" ]; then
-        load_path="`$run_dust load-path option`"
+    if [ -f "project.pxi" ] && [ -f ".load-path" ]; then
+        load_path="`cat .load-path`"
     fi
-    echo $load_path
 }
 
 case $1 in
-    "get-deps")
-        $run_dust $@ | sh
-        ;;
     ""|"repl")
         rlwrap_cmd=""
         if [ -n "`which rlwrap`" ]; then
             rlwrap_cmd="rlwrap -aignored -n"
         fi
-        $rlwrap_cmd $pixie_path `load_path`
+        set_load_path
+        $rlwrap_cmd $pixie_path $load_path
         ;;
     "run")
         shift
         file=$1
         shift
-        $pixie_path `load_path` $file $@
+        set_load_path
+        $pixie_path $load_path $file $@
         ;;
     -h|--help)
         $run_dust help

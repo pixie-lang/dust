@@ -41,8 +41,7 @@ project:
 
 With such a project definition you can run `dust get-deps` to fetch the
 dependencies of the project and dust will set up the `load-paths` var in
-Pixie so that the namespaces are availlable in the repl or when running
-programs:
+Pixie so that the namespaces are available in the repl or when running programs:
 
 ```
 $ dust get-deps
@@ -76,5 +75,4 @@ Some ideas:
 
 * `dust doc`, probably using something like [this](https://github.com/pixie-lang/pixie/blob/master/examples/gen-docs.pxi)
 * dependency improvements:
-    - recursive dependencies (e.g. fetch dependencies of dependencies)
     - fetch dependencies from paths inside repositories, maybe via a `:path "sub/dir"` option
