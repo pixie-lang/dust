@@ -20,6 +20,10 @@ function set_load_path() {
     fi
 }
 
+if [ ! -f "project.edn" ] && [ -f "project.pxi" ]; then
+	echo "Warning: 'project.pxi' is deprecated, please use 'project.edn'."
+fi
+
 case $1 in
     ""|"repl")
         rlwrap_cmd=""
