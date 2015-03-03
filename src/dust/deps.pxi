@@ -48,7 +48,7 @@
   (let [url (str "https://github.com/" name "/archive/" version ".tar.gz")
         file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
         dep-dir (str "deps/" name)]
-    (when (not (fs/exists? (fs/->Dir dep-dir)))
+    (when (not (fs/exists? (fs/dir dep-dir)))
       (println "Downloading" name)
       (download url file-name)
       (extract-to file-name dep-dir)
@@ -60,7 +60,7 @@
   [project]
   (let [child-fn #(map resolve-dependency (:dependencies %))
         dep-dir "deps"]
-    (when (fs/exists? (fs/->Dir dep-dir))
+    (when (fs/exists? (fs/dir dep-dir))
       (cmd "rm" "-r" dep-dir))
     (mkdir dep-dir)
     (assoc project :dependencies

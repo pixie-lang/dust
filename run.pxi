@@ -35,7 +35,7 @@
 (defcmd load-path
   "Print the load path of the current project."
   []
-  (when (not (fs/exists? (fs/->File ".load-path")))
+  (when (not (fs/exists? (fs/file ".load-path")))
     (println "Please run `dust get-deps`")
     (exit 1))
   (doseq [path (str/split (io/slurp ".load-path") "--load-path")]
