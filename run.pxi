@@ -1,5 +1,5 @@
 (require dust.project :as p)
-(refer 'dust.project :only '(defproject))
+(refer 'dust.project :only '(defproject load-project!))
 
 (require dust.deps :as d)
 (require pixie.string :as str)
@@ -13,7 +13,7 @@
   [name description params & body]
   (let [body (if (:no-project (meta name))
                body
-               (cons `(load-file "project.pxi") body))
+               (cons `(load-project!) body))
         cmd {:name (str name)
              :description description
              :params `(quote ~params)
