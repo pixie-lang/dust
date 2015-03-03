@@ -4,8 +4,6 @@
   (require pixie.fs :as fs)
   (require dust.project :as p))
 
-(def *deps* (atom {}))
-
 (defn cmd
   [& args]
   (sh (str/join " " args)))
@@ -30,7 +28,7 @@
                         (if path
                           (map #(str path "/" %) source-paths)
                           source-paths))
-                      (conj (:dependencies project) project))]
+                      (:dependencies project))]
     (io/spit ".load-path"
              (str "--load-path " (str/join " --load-path " paths)))))
 
@@ -55,9 +53,7 @@
       (download url file-name)
       (extract-to file-name dep-dir)
       (rm file-name))
-    (let [project (load-project dep-dir)]
-      (swap! *deps* assoc (:name project) project)
-      project)))
+    (load-project dep-dir)))
 
 (defn get-deps
   "Recursively download and extract all project dependencies."
@@ -67,5 +63,5 @@
     (when (fs/exists? (fs/->Dir dep-dir))
       (cmd "rm" "-r" dep-dir))
     (mkdir dep-dir)
-    (vec (tree-seq :dependencies child-fn project))
-    (assoc project :dependencies (vals @*deps*))))
+    (assoc project :dependencies
+           (vec (tree-seq :dependencies child-fn project)))))
