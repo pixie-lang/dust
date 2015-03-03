@@ -29,14 +29,15 @@ dependencies.
 
 ## Project definition
 
-`dust` reads its settings from a per-project `project.pxi` file. In that file
+`dust` reads its settings from a per-project `project.edn` file. In that file
 one configures the name, version, dependencies and other metadata about the
 project:
 
 ```clojure
-(defproject dust "0.1.0-alpha"
-  :description "Magic fairy dust for Pixie"
-  :dependencies [[heyLu/hiccup.pxi "0.1.0-alpha"]])
+{:name dust
+ :version "0.1.0-alpha"
+ :description "Magic fairy dust for Pixie"
+ :dependencies [[heyLu/hiccup.pxi "0.1.0-alpha"]]}
 ```
 
 With such a project definition you can run `dust get-deps` to fetch the
