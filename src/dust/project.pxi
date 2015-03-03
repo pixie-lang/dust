@@ -1,4 +1,5 @@
 (ns dust.project
+  (require pixie.io :as io)
   (require pixie.string :as str))
 
 (def *project* (atom nil))
@@ -23,6 +24,16 @@
         (assoc :name `(quote ~nm) :version version)
         quote-dependency-names
         merge-defaults)))
+
+(defn read-project
+  "Load project in dir, returning the project map"
+  [dir]
+  (-> (io/slurp (str dir "/project.pxi"))
+      (read-string)
+      (rest)
+      (project->map)
+      (eval)
+      (assoc project :path dir)))
 
 (defmacro defproject
   [& args]
