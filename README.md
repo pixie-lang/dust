@@ -76,3 +76,10 @@ Some ideas:
 * `dust doc`, probably using something like [this](https://github.com/pixie-lang/pixie/blob/master/examples/gen-docs.pxi)
 * dependency improvements:
     - fetch dependencies from paths inside repositories, maybe via a `:path "sub/dir"` option
+
+## Copying
+
+Free use of this software is granted under the terms of the GNU Lesser
+General Public License (LGPL). For details see the files `LICENSE`
+included with the source distribution. All copyrights are owned by their
+respective authors.
