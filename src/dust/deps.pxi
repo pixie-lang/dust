@@ -32,16 +32,6 @@
     (io/spit ".load-path"
              (str "--load-path " (str/join " --load-path " paths)))))
 
-(defn load-project
-  "Load project.pxi in dir - return project map"
-  [dir]
-  (-> (io/slurp (str dir "/project.pxi"))
-      (read-string)
-      (rest)
-      (p/project->map)
-      (eval)
-      (assoc :path dir)))
-
 (defn resolve-dependency
   "Download and extract dependency - return dependency project map."
   [[name version]]
@@ -53,7 +43,7 @@
       (download url file-name)
       (extract-to file-name dep-dir)
       (rm file-name))
-    (load-project dep-dir)))
+    (p/read-project dep-dir)))
 
 (defn get-deps
   "Recursively download and extract all project dependencies."

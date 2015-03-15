@@ -1,10 +1,12 @@
 (ns dust.project
+  (require pixie.fs :as fs)
+  (require pixie.io :as io)
   (require pixie.string :as str))
 
 (def *project* (atom nil))
 
 (defn merge-defaults [project]
-  (merge {:source-paths ["src"]} project))
+  (merge {:source-paths ["src"], :dependencies []} project))
 
 (defn quote-dependency-names
   [project]
@@ -23,6 +25,23 @@
         (assoc :name `(quote ~nm) :version version)
         quote-dependency-names
         merge-defaults)))
+
+(defn read-project
+  "Load project in dir, returning the project map"
+  [dir]
+  (let [project (if (fs/exists? (fs/file (str dir "/project.edn")))
+                  (-> (io/slurp (str dir "/project.edn"))
+                      (read-string)
+                      (merge-defaults))
+                  (-> (io/slurp (str dir "/project.pxi"))
+                      (read-string)
+                      (rest)
+                      (project->map)
+                      (eval)))]
+    (assoc project :path dir)))
+
+(defn load-project! []
+  (reset! *project* (read-project ".")))
 
 (defmacro defproject
   [& args]

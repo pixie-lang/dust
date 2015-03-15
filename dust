@@ -15,10 +15,17 @@ run_dust="$pixie_path -l $base_path/src $base_path/run.pxi"
 
 function set_load_path() {
     load_path=""
-    if [ -f "project.pxi" ] && [ -f ".load-path" ]; then
+    if ([ -f "project.edn" ] || [ -f "project.pxi" ]) && [ -f ".load-path" ]; then
         load_path="`cat .load-path`"
     fi
 }
+
+if [ ! -f "project.edn" ] && [ -f "project.pxi" ]; then
+	echo "Warning: 'project.pxi' is deprecated, please use 'project.edn'."
+	echo "To start you can run the following command:"
+	echo "  pixie-vm -l $base_path/src -e '(require dust.project :as p) (p/load-project!) (prn (dissoc @p/*project* :path))'"
+	echo
+fi
 
 case $1 in
     ""|"repl")
