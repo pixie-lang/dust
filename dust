@@ -11,7 +11,6 @@ if [ -z "$pixie_path" ]; then
     echo "Error: 'pixie-vm' must be on your PATH"
     exit 1
 fi
-run_dust="$pixie_path -l $base_path/src $base_path/run.pxi"
 
 function set_load_path() {
     load_path=""
@@ -27,20 +26,21 @@ if [ ! -f "project.edn" ] && [ -f "project.pxi" ]; then
 	echo
 fi
 
+set_load_path
+run_dust="$pixie_path -l $base_path/src $load_path $base_path/run.pxi"
+
 case $1 in
     ""|"repl")
         rlwrap_cmd=""
         if [ -n "`which rlwrap`" ]; then
             rlwrap_cmd="rlwrap -aignored -n"
         fi
-        set_load_path
         $rlwrap_cmd $pixie_path $load_path
         ;;
     "run")
         shift
         file=$1
         shift
-        set_load_path
         $pixie_path $load_path $file $@
         ;;
     -h|--help)
