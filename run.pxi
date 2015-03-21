@@ -57,11 +57,23 @@
   [file]
   (throw (str "This should be invoked by the wrapper.")))
 
+(defn load-tests [dirs]
+  (println "Looking for tests...")
+  (let [dirs (distinct (map fs/dir dirs))
+        pxi-files (->> dirs
+                       (mapcat fs/walk-files)
+                       (filter #(fs/extension? % "pxi"))
+                       (filter #(str/starts-with? (fs/basename %) "test-"))
+                       (distinct))]
+    (foreach [file pxi-files]
+             (println "Loading " file)
+             (load-file (fs/abs file)))))
+
 (defcmd test "Run the tests of the current project."
   [& args]
   (println @load-paths)
 
-  (t/load-all-tests)
+  (load-tests (:test-paths @p/*project*))
 
   (let [result (apply t/run-tests args)]
     (exit (get result :fail))))

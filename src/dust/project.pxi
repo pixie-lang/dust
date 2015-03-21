@@ -6,7 +6,7 @@
 (def *project* (atom nil))
 
 (defn merge-defaults [project]
-  (merge {:source-paths ["src"], :dependencies []} project))
+  (merge {:source-paths ["src"], :test-paths ["test"], :dependencies []} project))
 
 (defn quote-dependency-names
   [project]
