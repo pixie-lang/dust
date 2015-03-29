@@ -29,15 +29,18 @@
 (defn read-project
   "Load project in dir, returning the project map"
   [dir]
-  (let [project (if (fs/exists? (fs/file (str dir "/project.edn")))
-                  (-> (io/slurp (str dir "/project.edn"))
-                      (read-string)
-                      (merge-defaults))
-                  (-> (io/slurp (str dir "/project.pxi"))
-                      (read-string)
-                      (rest)
-                      (project->map)
-                      (eval)))]
+  (let [exists? #(fs/exists? (fs/file (str dir %)))
+        project
+        (cond
+          (exists? "/project.edn") (-> (io/slurp (str dir "/project.edn"))
+                                       (read-string)
+                                       (merge-defaults))
+          (exists? "/project.pxi") (-> (io/slurp (str dir "/project.pxi"))
+                                       (read-string)
+                                       (rest)
+                                       (project->map)
+                                       (eval))
+          :else (throw "Dust did not find 'project.edn'"))]
     (assoc project :path dir)))
 
 (defn load-project! []
