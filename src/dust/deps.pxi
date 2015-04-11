@@ -30,7 +30,7 @@
                           source-paths))
                       (:dependencies project))]
     (io/spit ".load-path"
-             (str "--load-path " (str/join " --load-path " paths)))))
+             (str/trim (str "--load-path " (str/join " --load-path " paths))))))
 
 (defn resolve-dependency
   "Download and extract dependency - return dependency project map."
