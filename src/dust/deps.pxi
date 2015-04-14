@@ -32,17 +32,22 @@
     (io/spit ".load-path"
              (str "--load-path " (str/join " --load-path " paths)))))
 
+(defn- download-dep [name version dep-dir]
+  (let [url (str "https://github.com/" name "/archive/" version ".tar.gz")
+        file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
+        _ (println "Downloading" name)
+        _ (download url file-name)
+        extraction-result (extract-to file-name dep-dir)]
+    (when-not (zero? extraction-result)
+      (throw (str "Didn't find a valid tarball at " url)))
+    (rm file-name)))
+
 (defn resolve-dependency
   "Download and extract dependency - return dependency project map."
   [[name version]]
-  (let [url (str "https://github.com/" name "/archive/" version ".tar.gz")
-        file-name (str "deps/" (str/replace (str name) "/" "-") ".tar.gz")
-        dep-dir (str "deps/" name)]
+  (let [dep-dir (str "deps/" name)]
     (when (not (fs/exists? (fs/dir dep-dir)))
-      (println "Downloading" name)
-      (download url file-name)
-      (extract-to file-name dep-dir)
-      (rm file-name))
+      (download-dep name version dep-dir))
     (p/read-project dep-dir)))
 
 (defn get-deps
