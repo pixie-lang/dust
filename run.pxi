@@ -85,7 +85,7 @@
         (println (str "Usage: dust " name " " params))
         (println)
         (println description))
-      (println "Unkown command:" cmd))))
+      (println "Unknown command:" cmd))))
 
 (defn help-all []
   (println "Usage: dust <cmd> <options>")
@@ -104,6 +104,9 @@
 (def *command* (first program-arguments))
 
 (let [cmd (get @*all-commands* (symbol *command*))]
-  (if cmd
-    (apply (get cmd :cmd) (next program-arguments))
-    (println "Unknown command:" *command*)))
+  (try
+    (if cmd
+      (apply (get cmd :cmd) (next program-arguments))
+      (println "Unknown command:" *command*))
+    (catch :dust/DustException e
+      (println (str "Dust encountered an error: " (pr-str (ex-msg e)))))))
