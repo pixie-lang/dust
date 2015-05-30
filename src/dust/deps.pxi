@@ -39,7 +39,7 @@
         _ (download url file-name)
         extraction-result (extract-to file-name dep-dir)]
     (when-not (zero? extraction-result)
-      (throw [:dust/DustException (str "Didn't find a valid tarball at " url)]))
+      (throw [:dust/Exception (str "Didn't find a valid tarball at " url)]))
     (rm file-name)))
 
 (defn resolve-dependency

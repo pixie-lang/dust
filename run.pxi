@@ -108,5 +108,5 @@
     (if cmd
       (apply (get cmd :cmd) (next program-arguments))
       (println "Unknown command:" *command*))
-    (catch :dust/DustException e
+    (catch :dust/Exception e
       (println (str "Dust encountered an error: " (pr-str (ex-msg e)))))))

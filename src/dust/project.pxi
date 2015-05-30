@@ -40,7 +40,7 @@
                                        (rest)
                                        (project->map)
                                        (eval))
-          :else (throw [:dust/DustException "Dust did not find 'project.edn'"]))]
+          :else (throw [:dust/Exception "Dust did not find 'project.edn'"]))]
     (assoc project :path dir)))
 
 (defn load-project! []
