@@ -7,7 +7,38 @@
 (require pixie.fs :as fs)
 (require pixie.test :as t)
 
+
+
 (def *all-commands* (atom {}))
+(def unknown-command (atom true))
+(def show-all (atom false))
+(def namespaces (atom 
+  '("" 
+    "pixie.async"
+    "pixie.math"
+    "pixie.stacklets"
+    "pixie.system"
+    "pixie.buffers"
+    "pixie.test"
+    "pixie.channels"
+    "pixie.parser"
+    "pixie.time"
+    "pixie.csp"
+    "pixie.uv"
+    "pixie.repl"
+    "pixie.streams"
+    "pixie.ffi-infer"
+    "pixie.io.common"
+    "pixie.io.tty"
+    "pixie.io.tcp"
+    "pixie.io.uv-common"
+    "pixie.io"
+    "pixie.io-blocking"
+    "pixie.fs"
+    "pixie.set"
+    "pixie.string"
+    "pixie.walk")))
+
 
 (defmacro defcmd
   [name description params & body]
@@ -25,6 +56,49 @@
   "Describe the current project."
   []
   (p/describe @p/*project*))
+
+(defn loadns [ns]
+  ;(print (str "(require " ns ")"))  
+  (eval (read-string (str "(require " ns ")"))))
+
+(defn showdoc [ns function]
+  
+  ;loads other possible namespaces in case function is in other namespace
+  (def name (str (if (not= ns "") (str ns "/") "")))
+  (if (= @show-all true) (loadns ns))
+    
+  (def data (meta (eval (read-string (str name function)))))
+    (if (nil? data)
+      (#(%) 
+        (println (str "\n  " name function "\n\n\t No documentation available.\n"))
+        (reset! unknown-command false)
+        (if (= (first @namespaces) "") (reset! namespaces '())))
+      (#(%)
+        (print (str "\n  " name function)) 
+        (print 
+          (if (not= (str (:added data)) "nil") 
+              (str " (added: v" (:added data) ")") 
+              (str ""))) 
+        (print (str "\n\n\t"))
+        (println
+          (if (not= (str (:doc data)) "nil") 
+              (str (:doc data) "\n")
+              (str "No documentation available.\n"))) 
+        (reset! unknown-command false)
+        (if (= (first @namespaces) "")
+          (reset! namespaces '())))))
+
+(defcmd doc
+  "Show function documentation. Broad search using -all"
+  [function-name & search-all]
+  (if (= (str (first search-all)) "-all") (reset! show-all true))
+  (loop [_ 0]
+    (when (not= @namespaces '()) 
+      (try (showdoc (str (first @namespaces)) (str function-name))
+        (catch e
+         nil)) 
+         (recur (reset! namespaces (rest @namespaces)))))
+  (if (= @unknown-command true) (println (str "\n  " function-name "\n\n\t Function not found. " (if (not= (str (first search-all)) "-all") (str "Broaden search using -all flag.\n") (str "\n"))))))
 
 (defcmd deps
   "List the dependencies and their versions of the current project."
