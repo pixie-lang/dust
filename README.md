@@ -21,6 +21,7 @@ dependencies.
     deps      List the dependencies and their versions of the current project.
     repl      Start a REPL in the current project.
     run       Run the code in the given file.
+    doc       Show function documentation. Broaden search using -all
     load-path Print the load path of the current project.
     test      Run the tests of the current project.
     help      Display the help

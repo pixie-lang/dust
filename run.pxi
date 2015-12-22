@@ -89,7 +89,7 @@
           (reset! namespaces '())))))
 
 (defcmd doc
-  "Show function documentation. Broad search using -all"
+  "Show function documentation. Broaden search using -all"
   [function-name & search-all]
   (if (= (str (first search-all)) "-all") (reset! show-all true))
   (loop [_ 0]
