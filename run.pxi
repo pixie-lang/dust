@@ -38,7 +38,7 @@
   ;loads other possible namespaces in case function is in other namespace
     (if (= @show-all true) (eval (read-string (str "(require " ns ")"))))
       
-    (def data (meta (eval (read-string (str name function)))))
+    (let [data (meta (eval (read-string (str name function))))]
       (if (nil? data)
         (#(%) 
           (println (str "\n  " name function "\n\n\t No documentation available.\n"))
@@ -57,7 +57,7 @@
                 (str "No documentation available.\n"))) 
           (reset! unknown-command false)
           (if (= (first @namespaces) "")
-            (reset! namespaces '()))))))
+            (reset! namespaces '())))))))
 
 (defcmd doc
   "Show function documentation. Broaden search using -all"
