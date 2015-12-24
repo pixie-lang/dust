@@ -56,7 +56,7 @@
           (print
             (if (not= (str (:doc data)) "nil") 
                 (str (:doc data) " ")
-                (str "No further documentation Availablele.\n")))
+                (str "No further documentation available.\n")))
           (reset! unknown-command false)
           (print 
             (if (not= (str (:added data)) "nil") 
