@@ -12,7 +12,7 @@
 (def *all-commands* (atom {}))
 (def unknown-command (atom true))
 (def show-all (atom false))
-(def namespaces (atom '(""  "pixie.async" "pixie.math" "pixie.stacklets" "pixie.system" "pixie.buffers" "pixie.test" "pixie.channels" "pixie.parser" "pixie.time" "pixie.csp" "pixie.uv" "pixie.repl" "pixie.streams" "pixie.ffi-infer" "pixie.io.common" "pixie.io.tty" "pixie.io.tcp" "pixie.io.uv-common" "pixie.io" "pixie.io-blocking" "pixie.fs" "pixie.set" "pixie.string" "pixie.walk")))
+(def namespaces (atom '("pixie.stdlib"  "pixie.async" "pixie.math" "pixie.stacklets" "pixie.system" "pixie.buffers" "pixie.test" "pixie.channels" "pixie.parser" "pixie.time" "pixie.csp" "pixie.uv" "pixie.repl" "pixie.streams" "pixie.ffi-infer" "pixie.io.common" "pixie.io.tty" "pixie.io.tcp" "pixie.io.uv-common" "pixie.io" "pixie.io-blocking" "pixie.fs" "pixie.set" "pixie.string" "pixie.walk")))
 
 
 (defmacro defcmd
@@ -34,30 +34,38 @@
 
 
 (defn showdoc [ns function]
-  (let [name (str (if (not= ns "") (str ns "/") ""))]
+  (let [name (str (if (not= ns "pixie.stdlib") (str ns "/") (str ns "/")))]
   ;loads other possible namespaces in case function is in other namespace
-    (if (= @show-all true) (eval (read-string (str "(require " ns ")"))))
+    (if (= @show-all true) (eval   (read-string (str "(require " ns ")"))))
       
     (let [data (meta (eval (read-string (str name function))))]
+      (print (str "\n  " name function "\n\n\t"))
+      (let [func-name (if (not= (str/index-of function "/") nil) (str function) (str name function))]
+        (loop [sigs (lazy-seq (:signatures data))]
+          (when (not= sigs '()) 
+            (print (str/replace (str (lazy-seq (first sigs)) "  ") "(" (str "(" func-name " ")))
+            (recur (rest sigs)))))
+
       (if (nil? data)
-        (#(%) 
-          (println (str "\n  " name function "\n\n\t No documentation available.\n"))
+        (do 
+          (println "\n\n\t No documentation available.\n")
           (reset! unknown-command false)
           (if (= (first @namespaces) "") (reset! namespaces '())))
-        (#(%)
-          (print (str "\n  " name function)) 
+        (do
+          (print (str "\n\n\t"))
+          (print
+            (if (not= (str (:doc data)) "nil") 
+                (str (:doc data) " ")
+                (str "No further documentation available.\n")))
+          (reset! unknown-command false)
           (print 
             (if (not= (str (:added data)) "nil") 
-                (str " (added: v" (:added data) ")") 
-                (str ""))) 
-          (print (str "\n\n\t"))
-          (println
-            (if (not= (str (:doc data)) "nil") 
-                (str (:doc data) "\n")
-                (str "No documentation available.\n"))) 
-          (reset! unknown-command false)
-          (if (= (first @namespaces) "")
+                (str " [added: v" (:added data) "]\n\n") 
+                (str "\n\n")))
+          (if (= (first @namespaces) "pixie.stdlib")
             (reset! namespaces '())))))))
+
+
 
 (defcmd doc
   "Show function documentation. Broaden search using -all"
